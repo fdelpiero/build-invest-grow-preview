@@ -1,7 +1,11 @@
-# Build Invest Grow — propuesta de sitio
+# Build Invest Grow — website proposal
 
-Repositorio privado para el paquete de vista previa del sitio. Se subirá únicamente la versión estática generada; no incluye el kit de construcción ni credenciales.
+Public, static preview for review.
 
-El formulario de esta propuesta es demostrativo: no envía ni guarda consultas. Esta versión no está lista para producción.
+- Preview: https://fdelpiero.github.io/build-invest-grow-preview/
+- The repository is public. Anyone can view, download, and copy the source code and image assets.
+- This is a static export of the proposal; it does not include the original website kit or credentials.
+- The enquiry form is a visual demonstration only. It does not send or store enquiries.
+- This is a proposal preview, not the live production website.
 
-Si se habilita un preview web, la página y los recursos que cargue serán visibles para quien tenga el enlace y se podrán inspeccionar en el navegador. El código del repositorio seguirá privado.
+The official business website remains https://www.buildinvestgrow.com.au/.
