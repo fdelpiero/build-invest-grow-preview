@@ -1,0 +1,61 @@
+# Lo genera el kit al construir. NO lo edites a mano: se pisa en la siguiente construcción.
+# Si algo de aquí tiene que cambiar, se cambia en el kit (herramientas/lib/servidores.mjs).
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+AddDefaultCharset utf-8
+AddType application/manifest+json .webmanifest
+AddType image/webp .webp
+AddType image/avif .avif
+AddType font/woff2 .woff2
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 0. El paquete que se sube a Hostinger para publicar (site.zip) nunca se sirve a nadie.
+  RewriteRule ^site\.zip$ - [R=404,L]
+
+  # 1. Siempre https
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # 2. (Sin regla de www: el dominio todavía no está definido o es un subdominio.)
+
+  # 3. /index.html e /index → /   (las redirecciones van completas y con https: nunca regresan a http)
+  RewriteCond %{THE_REQUEST} \s/+((?:[^\s?]*/)?)index(?:\.html)?[\s?] [NC]
+  RewriteRule ^ https://%{HTTP_HOST}/%1 [R=301,L,NE]
+
+  # 4. /contacto.html → /contacto
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]+?)\.html[\s?] [NC]
+  RewriteRule ^ https://%{HTTP_HOST}/%1 [R=301,L,NE]
+
+  # 5. /contacto → contacto.html (por dentro, sin que se note)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "frame-ancestors 'self'; upgrade-insecure-requests"
+  Header always set Strict-Transport-Security "max-age=15552000"
+
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.[0-9a-f]{8}\.(css|js|webp|jpg|jpeg|png|svg|gif|avif|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^(robots\.txt|sitemap\.xml|manifest\.webmanifest)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/xml text/plain image/svg+xml application/manifest+json
+</IfModule>
